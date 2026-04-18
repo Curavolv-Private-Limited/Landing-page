@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Curavolv · Sections 7 · 8 · 9</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ══════════════════════════════════════════════════
+       TOKENS & RESET
+    ══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --teal:          #38A17C;
+      --teal-light:    #6EBBA1;
+      --purple:        #8454A8;
+      --purple-light:  #B89FCC;
+      --off-white:     #FDFEFE;
+      --near-black:    #111411;
+      --muted:         #6B7280;
+      --dark-green:    #1C3A2E;
+      --mint:          #C8EDE0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--off-white);
+      color: var(--near-black);
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SHARED LAYOUT
+    ══════════════════════════════════════════════════ */
+    section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 120px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PILL BADGE  (Animation ref #8)
+    ══════════════════════════════════════════════════ */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(56,161,124,0.1);
+      border: 1px solid var(--teal);
+      color: var(--teal);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      margin-bottom: 28px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+    .pill.show { opacity: 1; }
+
+    /* ══════════════════════════════════════════════════
+       WORD-BY-WORD HEADING  (Animation ref #1)
+    ══════════════════════════════════════════════════ */
+    .heading {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.12;
+      margin-bottom: 20px;
+      color: var(--near-black);
+    }
+    /* Words are wrapped by JS */
+    .heading .word {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+      line-height: 1.18;
+    }
+    .heading .word-inner {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 400ms ease-out, transform 400ms ease-out;
+    }
+    .heading .word-inner.up {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .body-text {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 580px;
+      margin-bottom: 60px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       RIPPLE BARS  (Animation ref #3)
+    ══════════════════════════════════════════════════ */
+    .ripple-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.13;
+    }
+    .rbar {
+      width: 3px;
+      height: 110px;
+      border-radius: 3px;
+      transform-origin: center;
+      animation: ripple 2.4s ease-in-out infinite;
+    }
+    @keyframes ripple {
+      0%, 100% { transform: scaleY(0.6); }
+      50%       { transform: scaleY(1.0); }
+    }
+
+    /* ══════════════════════════════════════════════════
+       SECTION 7  —  What We Promise
+       bg: plain off-white
+    ══════════════════════════════════════════════════ */
+    #s7 { background: var(--off-white); }
+
+    /* Cards row  (Animation ref #4) */
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .card-dark {
+      background: var(--dark-green);
+      border-left: 4px solid var(--teal);
+      border-radius: 20px;
+      padding: 44px 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 600ms ease-out, transform 600ms ease-out;
+    }
+    .card-dark.in { opacity: 1; transform: translateX(0); }
+
+    .card-light {
+      background: var(--off-white);
+      border: 1px solid #E5E7EB;
+      border-radius: 20px;
+      padding: 44px 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 600ms ease-out 100ms, transform 600ms ease-out 100ms;
+    }
+    .card-light.in { opacity: 1; transform: translateX(0); }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 30px;
+    }
+    .card-dark .card-title { color: #fff; }
+    .card-light .card-title { color: var(--near-black); }
+
+    /* Promise list */
+    .promise-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .promise-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    /* Icon pop-in  (Animation ref #5) */
+    .icon-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 1px;
+      transform: scale(0);
+      opacity: 0;
+    }
+    .icon-badge.pop {
+      animation: icon-spring 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes icon-spring {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .icon-check { background: rgba(56,161,124,0.2); color: var(--teal); }
+    .icon-x     { background: rgba(156,163,175,0.15); color: #9CA3AF; }
+
+    .li-white { color: rgba(255,255,255,0.85); }
+    .li-muted { color: var(--muted); }
+
+    /* Centered italic quote */
+    .s7-quote {
+      text-align: center;
+      font-style: italic;
+      font-size: 20px;
+      color: var(--teal);
+      font-family: 'Playfair Display', serif;
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .s7-quote.show { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════════════════════
+       TICKER  (Animation ref #9)
+    ══════════════════════════════════════════════════ */
+    .ticker-wrap {
+      width: 100%;
+      overflow: hidden;
+      border-top: 1px solid rgba(56,161,124,0.18);
+      border-bottom: 1px solid rgba(56,161,124,0.18);
+      padding: 18px 0;
+      background: var(--off-white);
+    }
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker-go 30s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 48px;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--teal);
+      padding: 0 48px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    @keyframes ticker-go {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ══════════════════════════════════════════════════
+       SECTION 8  —  Outcomes
+       bg: teal→purple gradient
+    ══════════════════════════════════════════════════ */
+    #s8 { background: linear-gradient(160deg, #F0FAF6 0%, #F8F4FC 100%); }
+    #s8 .heading { color: var(--near-black); }
+
+    .s8-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+      margin-bottom: 80px;
+    }
+
+    /* Floating glassmorphism card  (Animation ref #2) */
+    .glass-card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(56,161,124,0.2);
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+      padding: 44px 40px;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 700ms cubic-bezier(0.16,1,0.3,1),
+                  transform 700ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .glass-card.float-in { opacity: 1; transform: translateY(0); }
+
+    .transform-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 0;
+    }
+    .transform-row + .transform-row {
+      border-top: 1px solid rgba(56,161,124,0.1);
+    }
+    .t-left  { font-size: 15px; color: var(--muted); min-width: 96px; }
+    .t-right { font-size: 17px; font-weight: 600; color: var(--teal); }
+
+    /* SVG arrow draw  (Animation ref #2 + stroke-dashoffset) */
+    .arrow-svg { flex-shrink: 0; overflow: visible; }
+    .arrow-shaft, .arrow-head {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 500ms ease-out;
+    }
+    /* Row 1 */
+    .glass-card.float-in .transform-row:nth-child(1) .arrow-shaft { stroke-dashoffset: 0; transition-delay: 450ms; }
+    .glass-card.float-in .transform-row:nth-child(1) .arrow-head  { stroke-dashoffset: 0; transition-delay: 750ms; }
+    /* Row 2 */
+    .glass-card.float-in .transform-row:nth-child(2) .arrow-shaft { stroke-dashoffset: 0; transition-delay: 750ms; }
+    .glass-card.float-in .transform-row:nth-child(2) .arrow-head  { stroke-dashoffset: 0; transition-delay: 1050ms; }
+    /* Row 3 */
+    .glass-card.float-in .transform-row:nth-child(3) .arrow-shaft { stroke-dashoffset: 0; transition-delay: 1050ms; }
+    .glass-card.float-in .transform-row:nth-child(3) .arrow-head  { stroke-dashoffset: 0; transition-delay: 1350ms; }
+
+    /* Orbit diagram  (Animation ref #6) */
+    .orbit-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .orbit-outer {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
+    .orbit-ring {
+      position: absolute;
+      inset: 0;
+      border: 1.5px dashed rgba(56,161,124,0.35);
+      border-radius: 50%;
+    }
+    .orbit-ring-inner {
+      position: absolute;
+      inset: 28px;
+      border: 1px dashed rgba(132,84,168,0.2);
+      border-radius: 50%;
+    }
+    /* The spinner wrapper rotates; the dot inside orbits */
+    .orbit-spinner {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      animation: orbit-spin 4s linear infinite;
+    }
+    @keyframes orbit-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    /* Dot sits 110px above spinner origin = on the ring */
+    .orbit-dot {
+      position: absolute;
+      width: 12px; height: 12px;
+      top: -116px; /* -(110px radius + 6px half-dot) */
+      left: -6px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(56,161,124,0.25), 0 0 14px rgba(56,161,124,0.6);
+    }
+    /* Center text inside orbit */
+    .orbit-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 36px;
+      text-align: center;
+    }
+    .orbit-pair {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+    .orbit-pair strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--teal);
+    }
+    .orbit-sep {
+      width: 1px;
+      height: 8px;
+      background: rgba(56,161,124,0.22);
+    }
+
+    /* Stat progress bars */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .stat-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 500ms ease, transform 500ms ease;
+    }
+    .stat-item.show { opacity: 1; transform: translateY(0); }
+    .stat-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--near-black);
+      margin-bottom: 14px;
+    }
+    .bar-track {
+      height: 6px;
+      background: rgba(56,161,124,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, var(--teal), var(--teal-light));
+      border-radius: 999px;
+      transition: width 1200ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .bar-fill.full { width: 100%; }
+    .stat-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.55;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SECTION 9  —  Experiences
+       bg: dark forest green  (Animation ref #7)
+    ══════════════════════════════════════════════════ */
+    #s9 { background: var(--dark-green); color: white; }
+    #s9 .heading { color: #fff; }
+    #s9 .pill {
+      background: rgba(56,161,124,0.15);
+      border-color: rgba(56,161,124,0.45);
+    }
+    .s9-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.42);
+      margin-bottom: 56px;
+      line-height: 1.7;
+    }
+
+    /* 2×2 quote grid */
+    .quotes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .quote-card {
+      background: rgba(255,255,255,0.055);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 16px;
+      border-left: 3px solid var(--teal);
+      padding: 28px;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    /* Stagger 0→3 via data-qi  (Animation ref #7 stagger) */
+    .quote-card[data-qi="0"] { transition: opacity 500ms ease 0ms,   transform 500ms ease 0ms; }
+    .quote-card[data-qi="1"] { transition: opacity 500ms ease 150ms, transform 500ms ease 150ms; }
+    .quote-card[data-qi="2"] { transition: opacity 500ms ease 300ms, transform 500ms ease 300ms; }
+    .quote-card[data-qi="3"] { transition: opacity 500ms ease 450ms, transform 500ms ease 450ms; }
+    .quote-card.show { opacity: 1; transform: translateY(0); }
+
+    .q-icon  { font-size: 28px; margin-bottom: 14px; }
+    .q-title { font-size: 17px; font-weight: 600; color: white; margin-bottom: 10px; }
+    .q-text  {
+      font-size: 14px;
+      line-height: 1.8;
+      /* starts at mint, JS scroll-reveals to white (Animation ref #7) */
+      color: var(--mint);
+      border-left: 0; /* border is on the card, not the text */
+    }
+
+    /* ══════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .inner         { padding: 80px 24px; }
+      .cards-row     { grid-template-columns: 1fr; }
+      .s8-layout     { grid-template-columns: 1fr; }
+      .stats-grid    { grid-template-columns: 1fr; gap: 28px; }
+      .quotes-grid   { grid-template-columns: 1fr; }
+      .ticker-item   { font-size: 30px; padding: 0 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 7 — "What We Promise (And What We Don't)"  -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="s7">
+
+  <!-- Ripple bars background -->
+  <div class="ripple-bg" id="ripple-s7"></div>
+
+  <div class="inner">
+    <div class="pill" data-anim="pill">OUR COMMITMENTS</div>
+    <h2 class="heading" data-anim="heading">Built on Integrity. Guided by Reality.</h2>
+    <p class="body-text">We believe honest guidance builds confidence—and careers that endure.</p>
+
+    <div class="cards-row">
+
+      <!-- LEFT — dark promise card -->
+      <div class="card-dark" data-anim="card-left">
+        <h3 class="card-title">What We Promise</h3>
+        <ul class="promise-list">
+          <li>
+            <span class="icon-badge icon-check">✓</span>
+            <span class="li-white">Clarity before commitment</span>
+          </li>
+          <li>
+            <span class="icon-badge icon-check">✓</span>
+            <span class="li-white">Evidence-guided, human-led guidance</span>
+          </li>
+          <li>
+            <span class="icon-badge icon-check">✓</span>
+            <span class="li-white">Preparation that compounds</span>
+          </li>
+          <li>
+            <span class="icon-badge icon-check">✓</span>
+            <span class="li-white">Accountability at every step</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- RIGHT — light don't card -->
+      <div class="card-light" data-anim="card-right">
+        <h3 class="card-title">What We Don't Promise</h3>
+        <ul class="promise-list">
+          <li>
+            <span class="icon-badge icon-x">✕</span>
+            <span class="li-muted">Guaranteed admissions or jobs</span>
+          </li>
+          <li>
+            <span class="icon-badge icon-x">✕</span>
+            <span class="li-muted">Shortcuts over substance</span>
+          </li>
+          <li>
+            <span class="icon-badge icon-x">✕</span>
+            <span class="li-muted">One-size-fits-all paths</span>
+          </li>
+        </ul>
+      </div>
+
+    </div><!-- /cards-row -->
+
+    <p class="s7-quote" data-anim="s7-quote">
+      "Honest guidance builds confidence—and careers that endure."
+    </p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  TICKER  (between S7 and S8)                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <!--
+      Two identical copies → translateX(-50%) scrolls by exactly one copy
+      creating a seamless infinite loop (no JS needed).
+    -->
+    <span class="ticker-item">Clarity · Evidence · Preparation · Accountability · Integrity · Human-led · Compound Growth ·</span>
+    <span class="ticker-item">Clarity · Evidence · Preparation · Accountability · Integrity · Human-led · Compound Growth ·</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 8 — "Outcomes & Career Trajectories"      -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="s8">
+
+  <!-- Ripple bars background (slightly more transparent on gradient bg) -->
+  <div class="ripple-bg" id="ripple-s8" style="opacity:0.08;"></div>
+
+  <div class="inner">
+    <div class="pill" data-anim="pill">OUTCOMES</div>
+    <h2 class="heading" data-anim="heading">What Progress Looks Like When Careers Are Designed.</h2>
+    <p class="body-text">We measure progress by alignment, readiness, confidence, and long-term growth—not just titles.</p>
+
+    <div class="s8-layout">
+
+      <!-- Floating glassmorphism card -->
+      <div class="glass-card" data-anim="glass">
+
+        <!-- Row 1: Uncertainty → Direction -->
+        <div class="transform-row">
+          <span class="t-left">Uncertainty</span>
+          <svg class="arrow-svg" width="44" height="16" viewBox="0 0 44 16" fill="none">
+            <path class="arrow-shaft"
+              d="M 0 8 L 34 8"
+              stroke="#38A17C" stroke-width="2" stroke-linecap="round"
+              pathLength="1"/>
+            <path class="arrow-head"
+              d="M 26 2 L 37 8 L 26 14"
+              stroke="#38A17C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              pathLength="1"/>
+          </svg>
+          <span class="t-right">Direction</span>
+        </div>
+
+        <!-- Row 2: Credentials → Readiness -->
+        <div class="transform-row">
+          <span class="t-left">Credentials</span>
+          <svg class="arrow-svg" width="44" height="16" viewBox="0 0 44 16" fill="none">
+            <path class="arrow-shaft"
+              d="M 0 8 L 34 8"
+              stroke="#38A17C" stroke-width="2" stroke-linecap="round"
+              pathLength="1"/>
+            <path class="arrow-head"
+              d="M 26 2 L 37 8 L 26 14"
+              stroke="#38A17C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              pathLength="1"/>
+          </svg>
+          <span class="t-right">Readiness</span>
+        </div>
+
+        <!-- Row 3: Entry → Momentum -->
+        <div class="transform-row">
+          <span class="t-left">Entry</span>
+          <svg class="arrow-svg" width="44" height="16" viewBox="0 0 44 16" fill="none">
+            <path class="arrow-shaft"
+              d="M 0 8 L 34 8"
+              stroke="#38A17C" stroke-width="2" stroke-linecap="round"
+              pathLength="1"/>
+            <path class="arrow-head"
+              d="M 26 2 L 37 8 L 26 14"
+              stroke="#38A17C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              pathLength="1"/>
+          </svg>
+          <span class="t-right">Momentum</span>
+        </div>
+
+      </div><!-- /glass-card -->
+
+      <!-- Orbit diagram -->
+      <div class="orbit-wrap">
+        <div class="orbit-outer">
+          <!-- Outer dashed ring -->
+          <div class="orbit-ring"></div>
+          <!-- Inner smaller ring (decorative depth) -->
+          <div class="orbit-ring-inner"></div>
+
+          <!--
+            Spinner wrapper: positioned at center (0×0 element).
+            It rotates → dot inside travels around the ring.
+            Dot is offset 110px above origin (matching ring radius).
+          -->
+          <div class="orbit-spinner">
+            <div class="orbit-dot"></div>
+          </div>
+
+          <!-- Centre text: the 3 transformation pairs -->
+          <div class="orbit-center">
+            <div class="orbit-pair">Uncertainty<strong>Direction</strong></div>
+            <div class="orbit-sep"></div>
+            <div class="orbit-pair">Credentials<strong>Readiness</strong></div>
+            <div class="orbit-sep"></div>
+            <div class="orbit-pair">Entry<strong>Momentum</strong></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /s8-layout -->
+
+    <!-- Animated progress bars -->
+    <div class="stats-grid" data-anim="stats">
+      <div class="stat-item" data-si="0">
+        <div class="stat-label">Alignment</div>
+        <div class="bar-track"><div class="bar-fill"></div></div>
+        <div class="stat-desc">Goal-to-path fit across all engagements</div>
+      </div>
+      <div class="stat-item" data-si="1">
+        <div class="stat-label">Readiness</div>
+        <div class="bar-track"><div class="bar-fill"></div></div>
+        <div class="stat-desc">Application & interview preparation depth</div>
+      </div>
+      <div class="stat-item" data-si="2">
+        <div class="stat-label">Confidence</div>
+        <div class="bar-track"><div class="bar-fill"></div></div>
+        <div class="stat-desc">Self-reported decision clarity at programme end</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 9 — "Experiences That Shape Confidence"   -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="s9">
+  <div class="inner">
+    <div class="pill" data-anim="pill">EXPERIENCES</div>
+    <h2 class="heading" data-anim="heading">What Thoughtful Guidance Feels Like in Practice.</h2>
+    <p class="s9-sub">Across prior advisory work, individuals consistently describe:</p>
+
+    <!-- 2×2 quote grid (staggered: top-left → top-right → bottom-left → bottom-right) -->
+    <div class="quotes-grid" data-anim="quotes">
+
+      <div class="quote-card" data-qi="0">
+        <div class="q-icon">🤝</div>
+        <div class="q-title">Strong support systems</div>
+        <p class="q-text">Guidance that stayed with them through every critical decision, not just the obvious ones.</p>
+      </div>
+
+      <div class="quote-card" data-qi="1">
+        <div class="q-icon">⚡</div>
+        <div class="q-title">Acceleration through clarity</div>
+        <p class="q-text">The path became clearer — and faster — once the fog of uncertainty was removed.</p>
+      </div>
+
+      <div class="quote-card" data-qi="2">
+        <div class="q-icon">🎯</div>
+        <div class="q-title">Mentorship grounded in experience</div>
+        <p class="q-text">Real-world insight from those who have walked similar paths in U.S. healthcare.</p>
+      </div>
+
+      <div class="quote-card" data-qi="3">
+        <div class="q-icon">🏗️</div>
+        <div class="q-title">Confidence built through preparation</div>
+        <p class="q-text">Not just told what to do — equipped to navigate independently.</p>
+      </div>
+
+    </div><!-- /quotes-grid -->
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     VANILLA JS — all animations
+══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ─── helpers ─────────────────────────────────── */
+  function lerp (a, b, t) { return a + (b - a) * t; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* ══════════════════════════════════════════════
+     1. RIPPLE BARS — build teal→mint→purple bars
+  ══════════════════════════════════════════════ */
+  function buildBars(id) {
+    const host = document.getElementById(id);
+    if (!host) return;
+    const N = 20;
+    /* colour stops: teal #38A17C → mint #C8EDE0 → purple #8454A8 */
+    const stops = [
+      [56,  161, 124],
+      [200, 237, 224],
+      [132, 84,  168],
+    ];
+
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      let r, g, b;
+      if (t <= 0.5) {
+        const u = t / 0.5;
+        r = lerp(stops[0][0], stops[1][0], u);
+        g = lerp(stops[0][1], stops[1][1], u);
+        b = lerp(stops[0][2], stops[1][2], u);
+      } else {
+        const u = (t - 0.5) / 0.5;
+        r = lerp(stops[1][0], stops[2][0], u);
+        g = lerp(stops[1][1], stops[2][1], u);
+        b = lerp(stops[1][2], stops[2][2], u);
+      }
+      const bar = document.createElement('div');
+      bar.className = 'rbar';
+      bar.style.cssText = `background:rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)});animation-delay:${(i * 0.12).toFixed(2)}s`;
+      host.appendChild(bar);
+    }
+  }
+
+  buildBars('ripple-s7');
+  buildBars('ripple-s8');
+
+  /* ══════════════════════════════════════════════
+     2. HEADING WORD-SPLIT
+     Wraps each word so we can stagger translateY
+  ══════════════════════════════════════════════ */
+  function splitHeading(el) {
+    const words = el.textContent.trim().split(/\s+/);
+    el.innerHTML = words
+      .map(w => `<span class="word"><span class="word-inner">${w}</span></span>`)
+      .join(' ');
+  }
+
+  function revealHeading(el) {
+    el.querySelectorAll('.word-inner').forEach((span, i) => {
+      span.style.transitionDelay = `${i * 60}ms`;
+      span.classList.add('up');
+    });
+  }
+
+  document.querySelectorAll('[data-anim="heading"]').forEach(splitHeading);
+
+  /* ══════════════════════════════════════════════
+     3. INTERSECTION OBSERVER — scroll triggers
+  ══════════════════════════════════════════════ */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(({ target: el, isIntersecting }) => {
+      if (!isIntersecting) return;
+      const type = el.dataset.anim;
+
+      /* Pill — fades in 300ms before heading */
+      if (type === 'pill') {
+        el.classList.add('show');
+      }
+
+      /* Heading — word-by-word after 300ms pill delay */
+      else if (type === 'heading') {
+        setTimeout(() => revealHeading(el), 300);
+      }
+
+      /* Left card slides from left; triggers icon pop-ins */
+      else if (type === 'card-left') {
+        el.classList.add('in');
+        el.querySelectorAll('.icon-badge').forEach((badge, i) => {
+          setTimeout(() => badge.classList.add('pop'), 600 + i * 80);
+        });
+      }
+
+      /* Right card slides from right; icons slightly later */
+      else if (type === 'card-right') {
+        el.classList.add('in');
+        el.querySelectorAll('.icon-badge').forEach((badge, i) => {
+          setTimeout(() => badge.classList.add('pop'), 700 + i * 80);
+        });
+      }
+
+      /* Centered italic quote */
+      else if (type === 's7-quote') {
+        setTimeout(() => el.classList.add('show'), 200);
+      }
+
+      /* Floating glassmorphism card */
+      else if (type === 'glass') {
+        el.classList.add('float-in');
+      }
+
+      /* Stats grid — stagger each bar independently */
+      else if (type === 'stats') {
+        el.querySelectorAll('.stat-item').forEach(item => {
+          const delay = parseInt(item.dataset.si, 10) * 150;
+          setTimeout(() => {
+            item.classList.add('show');
+            /* Bar fill triggers 100ms after item appears */
+            setTimeout(() => item.querySelector('.bar-fill').classList.add('full'), 100);
+          }, delay);
+        });
+      }
+
+      /* 2×2 quote grid — all cards show at once, CSS handles stagger */
+      else if (type === 'quotes') {
+        el.querySelectorAll('.quote-card').forEach(card => card.classList.add('show'));
+      }
+
+      io.unobserve(el);
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('[data-anim]').forEach(el => io.observe(el));
+
+  /* ══════════════════════════════════════════════
+     4. SECTION 9 — scroll-driven quote text
+        colour reveal: mint #C8EDE0 → white
+        scrubbed over 200px of scroll entry
+  ══════════════════════════════════════════════ */
+  (function s9ColorReveal() {
+    const s9     = document.getElementById('s9');
+    const texts  = s9.querySelectorAll('.q-text');
+
+    function update() {
+      const rect     = s9.getBoundingClientRect();
+      const progress = clamp((window.innerHeight - rect.top) / 200, 0, 1);
+
+      /* Lerp RGB channels:  #C8EDE0 → rgba(255,255,255,0.72) */
+      const r = Math.round(lerp(200, 255, progress)); /* C8 = 200 */
+      const g = Math.round(lerp(237, 255, progress)); /* ED = 237 */
+      const b = Math.round(lerp(224, 255, progress)); /* E0 = 224 */
+      const a = +(lerp(0.88, 0.72, progress)).toFixed(3);
+
+      texts.forEach(t => { t.style.color = `rgba(${r},${g},${b},${a})`; });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update(); /* Run once on load in case section is already in view */
+  })();
+
+})();
+</script>
+</body>
+</html>

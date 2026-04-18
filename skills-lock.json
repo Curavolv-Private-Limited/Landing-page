@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "skills": {
+    "canvas-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "a2fe47d24b3fd8e52faef731fff099c557e698083cd644b2e5695cc4dd8c7715"
+    },
+    "design-taste-frontend": {
+      "source": "leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "9d1e82c5c409d2b0247245a005bc0f7e4447c0999b78dcea60f568c1ba4a6694"
+    },
+    "framer-motion": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "computedHash": "39a33b58952788812d305f7b676b86ee800d3d5be9752e10392435d7fae73d8a"
+    },
+    "framer-motion-animator": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "computedHash": "d0137ba04049bf8926bc80f6a5e2b82d94b5633b6445a85dbfb26ab4f1b104c6"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "063a0e6448123cd359ad0044cc46b0e490cc7964d45ef4bb9fd842bd2ffbca67"
+    },
+    "ui-animation": {
+      "source": "mblode/agent-skills",
+      "sourceType": "github",
+      "computedHash": "c0df66c159771b0a92f74d9b2a3c6653bb75a35c31e5a7f82a866af52b23f651"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "0a413bf988d06481f69bb81df2070741c3ba12dd9f1be2706d57f259c905992d"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
+    }
+  }
+}
